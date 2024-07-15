@@ -132,3 +132,9 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.AllowAny"
     ]
 }
+
+# MinIO settings
+MINIO_STORAGE_ENDPOINT = 'minio:9000'
+MINIO_STORAGE_ACCESS_KEY = 'admin'
+MINIO_STORAGE_SECRET_KEY = 'SydneyRhombus'
+MINIO_STORAGE_USE_HTTPS = False
