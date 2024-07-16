@@ -9,7 +9,7 @@ class TypeInferer:
     '''
     Clean data method
     '''
-    def clean(self) -> pd.DataFrame:
+    def clean(self) -> pd.Series:
         null_val = ["", "none", "null", "n/a", "nan"]
         cleaned_data = self.data.replace(null_val, np.nan)
         cleaned_data = cleaned_data.apply(lambda x: x.strip().lower() if isinstance(x, str) else x)
