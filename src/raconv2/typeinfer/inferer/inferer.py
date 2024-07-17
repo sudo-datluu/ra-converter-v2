@@ -4,9 +4,17 @@ import re
 from datetime import datetime
 
 class Inferer:
-    def __init__(self, data: pd.Series):
+    def __init__(self, data: pd.Series, cat_threshold=None):
         self.data = data
+        self.cat_threshold = cat_threshold if cat_threshold else self.init_cat_threshold()
         self.na_count = data.isna().sum()
+
+    # decide the threshold for categorical data
+    # depend on the length of the data series 
+    def init_cat_threshold(self):
+        if len(self.data) <= 10: return 0.5
+        if len(self.data) <= 100: return 0.7
+        return 0.8
     
     def get_confident_rate(self, df_convert):
         # exclude the rows that were already nan
@@ -30,12 +38,13 @@ class Inferer:
 
     def categorical_infer(self):
         unique_count = self.data.nunique()
-        if self.data.dtype != 'object': return 0 # Not a categorical column
-        if unique_count / len(self.data) > 0.8: return 0 # Too many unique values
+        if self.data.dtype != 'object': return 0, self.data # Not a categorical column
+        if unique_count / len(self.data) > self.cat_threshold: return 0, self.data # Too many unique values
 
         df_convert = pd.Categorical(self.data)
+        conf_rate = 1 - unique_count / (len(self.data) - self.na_count)
 
-        return 1 - unique_count / len(self.data), df_convert
+        return conf_rate, df_convert
     
     def complex_infer(self):
         def convert(x):
